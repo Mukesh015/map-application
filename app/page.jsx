@@ -1,0 +1,608 @@
+"use client";
+import React, { useEffect } from "react";
+import { mappls } from "mappls-web-maps";
+import { useState } from "react";
+
+export default function Home() {
+  const [toggleMenuSVG, setToggleMenuSVG] = useState(false);
+
+  const handleFlipMenuButton = () => {
+    setToggleMenuSVG(!toggleMenuSVG);
+  };
+
+  const mapProps = {
+    center: [28.633, 77.2194],
+    traffic: false,
+    zoom: 4,
+    geolocation: false,
+    clickableIcons: false,
+  };
+  var mapObject;
+  // var mapplsClassObject = new mappls();
+
+  // mapplsClassObject.initialize("b4266dad24c3b90b433049ca68ef97ef", () => {
+  //   mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
+  //   mapObject.on("load", () => {});
+  // });
+
+  return (
+    <div style={{ position: "relative" }}>
+      <div
+        id="map"
+        style={{
+          width: "100%",
+          height: "100vh",
+          position: "absolute",
+          top: 0,
+          left: 0,
+        }}
+      ></div>
+      <div style={{ position: "absolute", top: "20px", left: "20px" }}>
+        <label
+          className="relative bg-white min-w-sm max-w-2xl flex flex-col md:flex-row items-center justify-center border py-2 px-2 rounded-2xl gap-2 shadow-2xl focus-within:border-gray-300"
+          htmlFor="search-bar"
+        >
+          {!toggleMenuSVG ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="48px"
+              viewBox="0 0 24 24"
+              width="48px"
+              fill="#000000"
+              className="cursor-pointer"
+              onClick={handleFlipMenuButton}
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+            </svg>
+          ) : (
+            <svg
+              onClick={handleFlipMenuButton}
+              className="cursor-pointer"
+              xmlns="http://www.w3.org/2000/svg"
+              height="48px"
+              viewBox="0 0 24 24"
+              width="48px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+            </svg>
+          )}
+
+          <input
+            id="search-bar"
+            placeholder="Search places here..."
+            className="px-6 py-2 w-full rounded-md flex-1 outline-none bg-white text-black"
+          />
+          <button className="w-full md:w-auto px-6 py-3 bg-black border-black text-white fill-white active:scale-95 duration-100 border will-change-transform overflow-hidden relative rounded-xl transition-all disabled:opacity-70">
+            <div className="relative">
+              {/* Loading animation change opacity to display */}
+              <div className="flex items-center justify-center h-3 w-3 absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 transition-all">
+                <svg
+                  className="opacity-0 animate-spin w-full h-full"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              </div>
+              <div className="flex items-center transition-all opacity-1 valid-">
+                <span className="text-sm font-semibold whitespace-nowrap truncate mx-auto">
+                  Search
+                </span>
+              </div>
+            </div>
+          </button>
+        </label>
+      </div>
+      {/* Navigation Toggle */}
+      <button
+        type="button"
+        className="text-gray-500 hover:text-gray-600"
+        data-hs-overlay="#docs-sidebar"
+        aria-controls="docs-sidebar"
+        aria-label="Toggle navigation"
+      >
+        <span className="sr-only">Toggle Navigation</span>
+        <svg
+          className="flex-shrink-0 size-4"
+          width="16"
+          height="16"
+          fill="currentColor"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fillRule="evenodd"
+            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
+          />
+        </svg>
+      </button>
+      {/* End Navigation Toggle */}
+
+      {toggleMenuSVG && (
+        <div
+          id="docs-sidebar"
+          className="hs-overlay  [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-3 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+        >
+          <div className="px-6 flex">
+            <a
+              className="flex-none text-xl font-semibold text-black"
+              href="#"
+              aria-label="Brand"
+            >
+              Mappics
+            </a>
+            <svg
+              onClick={handleFlipMenuButton}
+              className="cursor-pointer ml-24 "
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+            </svg>
+          </div>
+          <div className="mt-5 items-center justify-center text-center">
+            <img
+              className="h-20 w-20 ml-20 rounded-full"
+              src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg"
+              alt=""
+            />
+            <p className="text-gray-500 font-semibold mt-2">
+              Mukesh Kumar Gupta
+            </p>
+            <p className="border border-slate-300 ml-5 mr-5 mt-2"></p>
+          </div>
+
+          <nav
+            className="hs-accordion-group p-6 w-full flex flex-col flex-wrap"
+            data-hs-accordion-always-open
+          >
+            <ul className="space-y-1.5">
+              <li>
+                <a
+                  className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                  href="#"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z" />
+                  </svg>
+                  Dashboard
+                </a>
+              </li>
+
+              <li className="hs-accordion" id="users-accordion">
+                <button
+                  type="button"
+                  className="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    enable-background="new 0 0 24 24"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <g>
+                      <rect fill="none" height="24" width="24" />
+                      <path d="M21,4h-8h-1H7V2H5v2v10v8h2v-8h4h1h9l-2-5L21,4z M17.14,9.74l0.9,2.26H12h-1H7V6h5h1h5.05l-0.9,2.26L16.85,9L17.14,9.74z M14,9c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,7.9,14,9z" />
+                    </g>
+                  </svg>
+                  Take a tour
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+
+              <li className="hs-accordion" id="projects-accordion">
+                <button
+                  type="button"
+                  className=" hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    enable-background="new 0 0 24 24"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <g>
+                      <rect fill="none" height="24" width="24" />
+                    </g>
+                    <g>
+                      <path d="M12,4c1.93,0,3.68,0.78,4.95,2.05l-1.41,1.41C14.63,6.56,13.38,6,12,6S9.37,6.56,8.46,7.46L7.05,6.05 C8.32,4.78,10.07,4,12,4z M19.78,3.23l-1.41,1.41C16.74,3.01,14.49,2,12.01,2S7.27,3.01,5.64,4.63L4.22,3.22 C6.22,1.23,8.97,0,12.01,0S17.79,1.23,19.78,3.23z M12,11c1.94,0,4,1.45,4,4.15c0,0.94-0.55,2.93-4,6.17c-3.45-3.24-4-5.23-4-6.17 C8,12.45,10.06,11,12,11z M12,9c-3.15,0-6,2.41-6,6.15c0,2.49,2,5.44,6,8.85c4-3.41,6-6.36,6-8.85C18,11.41,15.15,9,12,9z M13.5,15 c0-0.83-0.67-1.5-1.5-1.5c-0.83,0-1.5,0.67-1.5,1.5c0,0.83,0.67,1.5,1.5,1.5C12.83,16.5,13.5,15.83,13.5,15z" />
+                    </g>
+                  </svg>
+                  Share locations
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+
+              <li className="hs-accordion" id="account-accordion">
+                <button
+                  type="button"
+                  className="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    enable-background="new 0 0 24 24"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <g>
+                      <path d="M0,0h24v24H0V0z" fill="none" />
+                    </g>
+                    <g>
+                      <g>
+                        <path d="M4,18v-0.65c0-0.34,0.16-0.66,0.41-0.81C6.1,15.53,8.03,15,10,15c0.03,0,0.05,0,0.08,0.01c0.1-0.7,0.3-1.37,0.59-1.98 C10.45,13.01,10.23,13,10,13c-2.42,0-4.68,0.67-6.61,1.82C2.51,15.34,2,16.32,2,17.35V20h9.26c-0.42-0.6-0.75-1.28-0.97-2H4z" />
+                        <path d="M10,12c2.21,0,4-1.79,4-4s-1.79-4-4-4C7.79,4,6,5.79,6,8S7.79,12,10,12z M10,6c1.1,0,2,0.9,2,2s-0.9,2-2,2 c-1.1,0-2-0.9-2-2S8.9,6,10,6z" />
+                        <path d="M20.75,16c0-0.22-0.03-0.42-0.06-0.63l1.14-1.01l-1-1.73l-1.45,0.49c-0.32-0.27-0.68-0.48-1.08-0.63L18,11h-2l-0.3,1.49 c-0.4,0.15-0.76,0.36-1.08,0.63l-1.45-0.49l-1,1.73l1.14,1.01c-0.03,0.21-0.06,0.41-0.06,0.63s0.03,0.42,0.06,0.63l-1.14,1.01 l1,1.73l1.45-0.49c0.32,0.27,0.68,0.48,1.08,0.63L16,21h2l0.3-1.49c0.4-0.15,0.76-0.36,1.08-0.63l1.45,0.49l1-1.73l-1.14-1.01 C20.72,16.42,20.75,16.22,20.75,16z M17,18c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,18,17,18z" />
+                      </g>
+                    </g>
+                  </svg>
+                  Account
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                  <svg
+                    className="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+
+                <div
+                  id="account-accordion"
+                  className="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                >
+                  <ul className="pt-2 ps-2">
+                    <li>
+                      <a
+                        className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                        href="#"
+                      >
+                        Change Password
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                        href="#"
+                      >
+                        Logout
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <li className="border border-slate-300 m-3"></li>
+            </ul>
+            <ul className="space-y-1.5">
+              <li className="hs-accordion" id="users-accordion">
+                <button
+                  type="button"
+                  className="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-1.8C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z" />
+                  </svg>
+                  Add a place
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+              <li className="hs-accordion" id="users-accordion">
+                <button
+                  type="button"
+                  className="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    enable-background="new 0 0 24 24"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <g>
+                      <path d="M0,0h24v24H0V0z" fill="none" />
+                    </g>
+                    <g>
+                      <path d="M15,5l-1.41,1.41L15,7.83L17.17,10H8c-2.76,0-5,2.24-5,5v4h2v-4c0-1.65,1.35-3,3-3h9.17L15,14.17l-1.41,1.41L15,17l6-6 L15,5z" />
+                    </g>
+                  </svg>
+                  Get directions
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+
+              <li className="hs-accordion" id="projects-accordion">
+                <button
+                  type="button"
+                  className=" hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z" />
+                  </svg>
+                  History
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+
+              <li className="hs-accordion" id="account-accordion">
+                <button
+                  type="button"
+                  className="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.09-.16-.26-.25-.44-.25-.06 0-.12.01-.17.03l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.06-.02-.12-.03-.18-.03-.17 0-.34.09-.43.25l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.09.16.26.25.44.25.06 0 .12-.01.17-.03l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.06.02.12.03.18.03.17 0 .34-.09.43-.25l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zm-1.98-1.71c.04.31.05.52.05.73 0 .21-.02.43-.05.73l-.14 1.13.89.7 1.08.84-.7 1.21-1.27-.51-1.04-.42-.9.68c-.43.32-.84.56-1.25.73l-1.06.43-.16 1.13-.2 1.35h-1.4l-.19-1.35-.16-1.13-1.06-.43c-.43-.18-.83-.41-1.23-.71l-.91-.7-1.06.43-1.27.51-.7-1.21 1.08-.84.89-.7-.14-1.13c-.03-.31-.05-.54-.05-.74s.02-.43.05-.73l.14-1.13-.89-.7-1.08-.84.7-1.21 1.27.51 1.04.42.9-.68c.43-.32.84-.56 1.25-.73l1.06-.43.16-1.13.2-1.35h1.39l.19 1.35.16 1.13 1.06.43c.43.18.83.41 1.23.71l.91.7 1.06-.43 1.27-.51.7 1.21-1.07.85-.89.7.14 1.13zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+                  </svg>
+                  Settings
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                  <svg
+                    className="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+              </li>
+              <li className="border border-slate-300 m-3"></li>
+            </ul>
+            <ul className="mt-4">
+              <li className="hs-accordion" id="projects-accordion">
+                <button
+                  type="button"
+                  className=" hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17l-.59.59-.58.58V4h16v12zm-9-4h2v2h-2zm0-6h2v4h-2z" />
+                  </svg>
+                  Send feedback
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+              <li className="hs-accordion" id="projects-accordion">
+                <button
+                  type="button"
+                  className=" hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM4 0h16v2H4zm0 22h16v2H4zm8-10c1.38 0 2.5-1.12 2.5-2.5S13.38 7 12 7 9.5 8.12 9.5 9.5 10.62 12 12 12zm0-3.5c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 7.49C17 13.9 13.69 13 12 13s-5 .9-5 2.99V17h10v-1.01zm-8.19-.49c.61-.52 2.03-1 3.19-1 1.17 0 2.59.48 3.2 1H8.81z" />
+                  </svg>
+                  Contact us
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+              <li className="hs-accordion" id="projects-accordion">
+                <button
+                  type="button"
+                  className=" hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  </svg>
+                  About
+                  <svg
+                    className="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      )}
+    </div>
+  );
+}
