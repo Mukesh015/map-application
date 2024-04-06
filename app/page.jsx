@@ -1,13 +1,17 @@
 "use client";
-import React, { useEffect } from "react";
 import { mappls } from "mappls-web-maps";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function Home() {
   const [toggleMenuSVG, setToggleMenuSVG] = useState(false);
+  const [toggleAccountMenu, setToggleAccountMenu] = useState(false);
 
   const handleFlipMenuButton = () => {
     setToggleMenuSVG(!toggleMenuSVG);
+  };
+
+  const handleFlipAccountMenuButton = () => {
+    setToggleAccountMenu(!toggleAccountMenu);
   };
 
   const mapProps = {
@@ -17,10 +21,9 @@ export default function Home() {
     geolocation: false,
     clickableIcons: false,
   };
-  var mapObject;
+  // var mapObject;
   // var mapplsClassObject = new mappls();
-
-  // mapplsClassObject.initialize("b4266dad24c3b90b433049ca68ef97ef", () => {
+  // mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
   //   mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
   //   mapObject.on("load", () => {});
   // });
@@ -37,9 +40,12 @@ export default function Home() {
           left: 0,
         }}
       ></div>
-      <div style={{ position: "absolute", top: "20px", left: "20px" }}>
+      <div
+        className="flex"
+        style={{ position: "absolute", top: "20px", left: "20px" }}
+      >
         <label
-          className="relative bg-white min-w-sm max-w-2xl flex flex-col md:flex-row items-center justify-center border py-2 px-2 rounded-2xl gap-2 shadow-2xl focus-within:border-gray-300"
+          className="relative bg-white min-w-sm max-w-3xl flex flex-col md:flex-row items-center justify-center border py-2 px-2 rounded-2xl gap-2 shadow-2xl focus-within:border-gray-300"
           htmlFor="search-bar"
         >
           {!toggleMenuSVG ? (
@@ -101,6 +107,16 @@ export default function Home() {
                 </svg>
               </div>
               <div className="flex items-center transition-all opacity-1 valid-">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="24px"
+                  viewBox="0 0 24 24"
+                  width="24px"
+                  fill="#FFFFFF"
+                >
+                  <path d="M0 0h24v24H0V0z" fill="none" />
+                  <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>
                 <span className="text-sm font-semibold whitespace-nowrap truncate mx-auto">
                   Search
                 </span>
@@ -108,6 +124,133 @@ export default function Home() {
             </div>
           </button>
         </label>
+        <div className="leading-1.5 flex ml-10 m-3 flex-col">
+          <div className="font-semibold shadow-2xl border border-slate-300 bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
+                className="mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+              >
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path d="M16 6v8h3v8h2V2c-2.76 0-5 2.24-5 4zm-5 3H9V2H7v7H5V2H3v7c0 2.21 1.79 4 4 4v9h2v-9c2.21 0 4-1.79 4-4V2h-2v7z" />
+              </svg>
+              restaurant
+            </button>
+          </div>
+        </div>
+        <div className="leading-1.5 flex m-3 flex-col">
+          <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
+                className="mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                enable-background="new 0 0 24 24"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+              >
+                <g>
+                  <rect
+                    fill="none"
+                    fill-rule="evenodd"
+                    height="24"
+                    width="24"
+                    x="0"
+                    y="0"
+                  />
+                  <path d="M4.17,11L4.17,11C4.12,11,4.06,11,4,11H4.17 M13.41,5H9v2h3.59l2,2H11l-4,2L5,9H0v2h4c-2.21,0-4,1.79-4,4 c0,2.21,1.79,4,4,4c2.21,0,4-1.79,4-4l2,2h3l3.49-6.1l1.01,1.01C16.59,12.64,16,13.75,16,15c0,2.21,1.79,4,4,4c2.21,0,4-1.79,4-4 c0-2.21-1.79-4-4-4c-0.18,0-0.36,0.03-0.53,0.05L17.41,9H20V6l-3.72,1.86L13.41,5L13.41,5z M20,17c-1.1,0-2-0.9-2-2 c0-1.1,0.9-2,2-2c1.1,0,2,0.9,2,2C22,16.1,21.1,17,20,17L20,17z M4,17c-1.1,0-2-0.9-2-2c0-1.1,0.9-2,2-2c1.1,0,2,0.9,2,2 C6,16.1,5.1,17,4,17L4,17z" />
+                </g>
+              </svg>
+              Petrol pump
+            </button>
+          </div>
+        </div>
+        <div className="leading-1.5 flex m-3 flex-col">
+          <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
+                className="mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                enable-background="new 0 0 24 24"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+              >
+                <rect fill="none" height="24" width="24" />
+                <path d="m11 8.89.94 3.11h2.82l-2.27 1.62.93 3.01L11 14.79l-2.42 1.84.93-3.01L7.24 12h2.82L11 8.89zM8.58 10H1l6.17 4.41L4.83 22 11 17.31 17.18 22l-2.35-7.59L21 10h-7.58L11 2l-2.42 8zm12.78 12-1.86-6.01L23.68 13h-3.44l-3.08 2.2 1.46 4.72L21.36 22zM17 8l-1.82-6-1.04 3.45.77 2.55H17z" />
+              </svg>
+              Hotel
+            </button>
+          </div>
+        </div>
+        <div className="leading-1.5 flex m-3 flex-col">
+          <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
+                className="mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+              >
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z" />
+              </svg>
+              Shopping mall
+            </button>
+          </div>
+        </div>
+        <div className="leading-1.5 flex m-3 flex-col">
+          <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
+                className="mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+              >
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path d="M11 17h2v-1h1c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1h-3v-1h4V8h-2V7h-2v1h-1c-.55 0-1 .45-1 1v3c0 .55.45 1 1 1h3v1H9v2h2v1zm9-13H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V6h16v12z" />
+              </svg>
+              ATM
+            </button>
+          </div>
+        </div>
+        <div className="leading-1.5 flex m-3 flex-col">
+          <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                enable-background="new 0 0 24 24"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+                className="mr-1"
+              >
+                <g>
+                  <rect fill="none" height="24" width="24" />
+                </g>
+                <g>
+                  <g>
+                    <path d="M20,6h-4V4c0-1.1-0.9-2-2-2h-4C8.9,2,8,2.9,8,4v2H4C2.9,6,2,6.9,2,8v12c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V8 C22,6.9,21.1,6,20,6z M10,4h4v2h-4V4z M20,20H4V8h16V20z" />
+                    <polygon points="13,10 11,10 11,13 8,13 8,15 11,15 11,18 13,18 13,15 16,15 16,13 13,13" />
+                  </g>
+                </g>
+              </svg>
+              Medical shop
+            </button>
+          </div>
+        </div>
       </div>
       {/* Navigation Toggle */}
       <button
@@ -136,7 +279,7 @@ export default function Home() {
       {toggleMenuSVG && (
         <div
           id="docs-sidebar"
-          className="hs-overlay  [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-3 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+          className="hs-overlay   [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-3 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
         >
           <div className="px-6 flex">
             <a
@@ -163,7 +306,7 @@ export default function Home() {
             <img
               className="h-20 w-20 ml-20 rounded-full"
               src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg"
-              alt=""
+              alt="https://i.pinimg.com/736x/0d/64/98/0d64989794b1a4c9d89bff571d3d5842.jpg"
             />
             <p className="text-gray-500 font-semibold mt-2">
               Mukesh Kumar Gupta
@@ -271,6 +414,7 @@ export default function Home() {
 
               <li className="hs-accordion" id="account-accordion">
                 <button
+                  onClick={handleFlipAccountMenuButton}
                   type="button"
                   className="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
                 >
@@ -324,29 +468,63 @@ export default function Home() {
                   </svg>
                 </button>
 
-                <div
-                  id="account-accordion"
-                  className="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                >
-                  <ul className="pt-2 ps-2">
-                    <li>
-                      <a
-                        className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
-                        href="#"
-                      >
-                        Change Password
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
-                        href="#"
-                      >
-                        Logout
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                {toggleAccountMenu && (
+                  <div
+                    id="account-accordion"
+                    className="hs-accordion-content w-full overflow-hidden transition-[height] ease-linear duration-700"
+                  >
+                    <ul className="pt-2 ps-2">
+                      <li>
+                        <a
+                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                          href="#"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            enable-background="new 0 0 24 24"
+                            height="24px"
+                            viewBox="0 0 24 24"
+                            width="24px"
+                            fill="#000000"
+                          >
+                            <g>
+                              <path d="M0,0h24v24H0V0z" fill="none" />
+                            </g>
+                            <g>
+                              <g>
+                                <path d="M2,17h20v2H2V17z M3.15,12.95L4,11.47l0.85,1.48l1.3-0.75L5.3,10.72H7v-1.5H5.3l0.85-1.47L4.85,7L4,8.47L3.15,7l-1.3,0.75 L2.7,9.22H1v1.5h1.7L1.85,12.2L3.15,12.95z M9.85,12.2l1.3,0.75L12,11.47l0.85,1.48l1.3-0.75l-0.85-1.48H15v-1.5h-1.7l0.85-1.47 L12.85,7L12,8.47L11.15,7l-1.3,0.75l0.85,1.47H9v1.5h1.7L9.85,12.2z M23,9.22h-1.7l0.85-1.47L20.85,7L20,8.47L19.15,7l-1.3,0.75 l0.85,1.47H17v1.5h1.7l-0.85,1.48l1.3,0.75L20,11.47l0.85,1.48l1.3-0.75l-0.85-1.48H23V9.22z" />
+                              </g>
+                            </g>
+                          </svg>
+                          Change Password
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                          href="#"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            enable-background="new 0 0 24 24"
+                            height="24px"
+                            viewBox="0 0 24 24"
+                            width="24px"
+                            fill="#000000"
+                          >
+                            <g>
+                              <path d="M0,0h24v24H0V0z" fill="none" />
+                            </g>
+                            <g>
+                              <path d="M17,8l-1.41,1.41L17.17,11H9v2h8.17l-1.58,1.58L17,16l4-4L17,8z M5,5h7V3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h7v-2H5V5z" />
+                            </g>
+                          </svg>
+                          Logout
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </li>
               <li className="border border-slate-300 m-3"></li>
             </ul>
