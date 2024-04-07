@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev":"tsc-watch --onSuccess \"npm start\"",
+    "start": "node build/index.js"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "tsc-watch": "^6.2.0",
+    "typescript": "^5.4.4"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.0"
+  }
+}

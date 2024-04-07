@@ -1,11 +1,18 @@
 "use client";
-
 import React, { useState } from "react";
+import Link from "next/link";
+import {
+  useSignInWithGithub,
+  useSignInWithGoogle,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
 
 export default function Login() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [signInWithGoogle] = useSignInWithGoogle(auth);
 
   return (
     <>
@@ -17,16 +24,14 @@ export default function Login() {
               src="https://99designs-blog.imgix.net/blog/wp-content/uploads/2022/05/Mastercard_2019_logo.svg-e1659036851269.png?auto=format&q=60&fit=max&w=930"
               alt=""
             />
-            <p>
-              <p className="text-black font-extrabold text-2xl ml-5 mt-1">
-                MAPPICS SUITE
-              </p>
-              <p className="text-slate-500 mt-2 ml-3">
-                Join and get access to Mappics Suite to enhance the productivity
-                of your businesses
-              </p>
+            <p className="text-black font-extrabold text-2xl ml-5 mt-1">
+              MAPPICS SUITE
             </p>
           </div>
+          <p className="text-slate-500 ml-10">
+            Join and get access to Mappics Suite to enhance the productivity of
+            your businesses
+          </p>
           <div className="m-10">
             <div className="">
               <div className="flex">
@@ -98,7 +103,7 @@ export default function Login() {
             </div>
           </div>
           <div className="mt-24">
-            <p className="text-slate-400">
+            <p className="text-slate-400 ml-10">
               © Copyright 2024. CE Info Systems Ltd. All Rights Reserved.
             </p>
           </div>
@@ -113,7 +118,10 @@ export default function Login() {
                     <h1 className="text-2xl font-semibold text-black">Login</h1>
                     <h2 className="text-gray-500 mt-2 text-sm flex">
                       Don't have an account?
-                      <p className="text-blue-500"> Create Account</p>
+                      <p className="text-blue-500 hover:text-blue-900 font-semibold cursor-pointer">
+                        {" "}
+                        <Link href={"/signup"}>Create Account</Link>
+                      </p>
                     </h2>
                   </div>
                   <div className="divide-y divide-gray-200">
@@ -151,11 +159,11 @@ export default function Login() {
                         </label>
                       </div>
                       <div className="flex">
-                        <p className="text-sm mr-16 font-semibold text-blue-500">
-                          Forgot password
+                        <p className="cursor-pointer text-sm mr-16 hover:text-blue-900 font-semibold text-blue-500">
+                          <Link href={"/forgotpassword"}>Forgot password</Link>
                         </p>
-                        <p className="text-sm font-semibold text-blue-500">
-                          Login via otp
+                        <p className="cursor-pointer hover:text-blue-900 text-sm font-semibold text-blue-500">
+                          <Link href={"/otplogin"}>Login via otp</Link>
                         </p>
                       </div>
                       <div className="relative">
@@ -166,10 +174,16 @@ export default function Login() {
                     </div>
                   </div>
                 </div>
-                <div className="border border-gray-300 mb-10"></div>
-
+                <div className="mb-10 text-slate-500 flex flex-row items-center">
+                  <div className="flex-grow border-gray-300 border"></div>
+                  <div className="ml-10 mr-10 text-slate-400">or</div>
+                  <div className="flex-grow border-gray-300 border"></div>
+                </div>
                 <div className="w-full flex">
-                  <button className="mr-14 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+                  <button
+                    onClick={() => signInWithGoogle()}
+                    className="mr-14 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"

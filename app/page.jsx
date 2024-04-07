@@ -126,7 +126,7 @@ export default function Home() {
         </label>
         <div className="leading-1.5 flex ml-10 m-3 flex-col">
           <div className="font-semibold shadow-2xl border border-slate-300 bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
-            <button className="me-2 flex active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+            <button className="me-2  flex active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
                 className="mr-1"
                 xmlns="http://www.w3.org/2000/svg"
@@ -148,7 +148,7 @@ export default function Home() {
               <svg
                 className="mr-1"
                 xmlns="http://www.w3.org/2000/svg"
-                enable-background="new 0 0 24 24"
+                enableBackground="new 0 0 24 24"
                 height="24px"
                 viewBox="0 0 24 24"
                 width="24px"
@@ -157,7 +157,7 @@ export default function Home() {
                 <g>
                   <rect
                     fill="none"
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     height="24"
                     width="24"
                     x="0"
@@ -176,7 +176,7 @@ export default function Home() {
               <svg
                 className="mr-1"
                 xmlns="http://www.w3.org/2000/svg"
-                enable-background="new 0 0 24 24"
+                enableBackground="new 0 0 24 24"
                 height="24px"
                 viewBox="0 0 24 24"
                 width="24px"
@@ -230,7 +230,7 @@ export default function Home() {
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                enable-background="new 0 0 24 24"
+                enableBackground="new 0 0 24 24"
                 height="24px"
                 viewBox="0 0 24 24"
                 width="24px"
@@ -345,7 +345,7 @@ export default function Home() {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    enable-background="new 0 0 24 24"
+                    enableBackground="new 0 0 24 24"
                     height="24px"
                     viewBox="0 0 24 24"
                     width="24px"
@@ -381,7 +381,7 @@ export default function Home() {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    enable-background="new 0 0 24 24"
+                    enableBackground="new 0 0 24 24"
                     height="24px"
                     viewBox="0 0 24 24"
                     width="24px"
@@ -420,7 +420,7 @@ export default function Home() {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    enable-background="new 0 0 24 24"
+                    enableBackground="new 0 0 24 24"
                     height="24px"
                     viewBox="0 0 24 24"
                     width="24px"
@@ -481,7 +481,7 @@ export default function Home() {
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            enable-background="new 0 0 24 24"
+                            enableBackground="new 0 0 24 24"
                             height="24px"
                             viewBox="0 0 24 24"
                             width="24px"
@@ -506,7 +506,7 @@ export default function Home() {
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            enable-background="new 0 0 24 24"
+                            enableBackground="new 0 0 24 24"
                             height="24px"
                             viewBox="0 0 24 24"
                             width="24px"
@@ -568,7 +568,7 @@ export default function Home() {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    enable-background="new 0 0 24 24"
+                    enableBackground="new 0 0 24 24"
                     height="24px"
                     viewBox="0 0 24 24"
                     width="24px"
