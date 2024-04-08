@@ -21,12 +21,12 @@ export default function Home() {
     geolocation: false,
     clickableIcons: false,
   };
-  // var mapObject;
-  // var mapplsClassObject = new mappls();
-  // mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
-  //   mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
-  //   mapObject.on("load", () => {});
-  // });
+  var mapObject;
+  var mapplsClassObject = new mappls();
+  mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
+    mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
+    mapObject.on("load", () => {});
+  });
 
   return (
     <div style={{ position: "relative" }}>
