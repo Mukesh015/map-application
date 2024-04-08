@@ -1,24 +1,33 @@
 "use client";
 import React, { useCallback, useState } from "react";
 import { auth } from "@/firebase/config";
+import { CgSpinner } from "react-icons/cg";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 export default function Signup() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [createUserWithEmailAndPassword, user, loading, error] =
+  const toggleLoading = () => {
+    setLoading(!loading);
+  };
+
+  const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
 
   const handleSignup = useCallback(async () => {
+    toggleLoading();
     try {
       const res = await createUserWithEmailAndPassword(email, password);
+      setLoading(false);
       console.log(res);
     } catch (error) {
+      setLoading(false);
       console.error("Internal server error", error);
     }
-  }, [email, password, userName, phone]);
+  }, [email, password, userName, phone,loading]);
 
   return (
     <>
@@ -252,12 +261,18 @@ export default function Signup() {
                           .
                         </label>
                       </div>
-                      <div className="relative justify-center text-center">
+                      <div className="relative justify-center ml-20">
                         <button
                           type="button"
                           onClick={handleSignup}
-                          className="active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70 bg-green-800 text-white font-semibold rounded-2xl px-6 py-1 mt-2"
+                          className="flex active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70 bg-green-800 text-white font-semibold rounded-2xl px-6 py-1 mt-2"
                         >
+                          {loading && (
+                            <CgSpinner
+                              className="mt-1 mr-2 animate-spin"
+                              size={20}
+                            />
+                          )}
                           Signup
                         </button>
                       </div>

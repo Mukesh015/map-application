@@ -1,10 +1,21 @@
 "use client";
 import { mappls } from "mappls-web-maps";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+const mapProps = {
+  center: [28.633, 77.2194],
+  traffic: false,
+  zoom: 4,
+  geolocation: false,
+  clickableIcons: false,
+};
 
 export default function Home() {
   const [toggleMenuSVG, setToggleMenuSVG] = useState(false);
   const [toggleAccountMenu, setToggleAccountMenu] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapobject,setMapObject ]=useState(null);
+  const [mapplsClassObject, setMapplsClassObject] = useState(null);
 
   const handleFlipMenuButton = () => {
     setToggleMenuSVG(!toggleMenuSVG);
@@ -14,20 +25,52 @@ export default function Home() {
     setToggleAccountMenu(!toggleAccountMenu);
   };
 
-  const mapProps = {
-    center: [28.633, 77.2194],
-    traffic: false,
-    zoom: 4,
-    geolocation: false,
-    clickableIcons: false,
-  };
-  var mapObject;
-  var mapplsClassObject = new mappls();
-  mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
-    mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
-    mapObject.on("load", () => {});
-  });
+  useEffect(() => {
+    const newMapplsClassObject = new mappls();
+    newMapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
+      const mapObj = newMapplsClassObject.Map({ id: "map", properties: mapProps });
+      setMapObject(mapObj);
+      setMapplsClassObject(newMapplsClassObject); // Store mapplsClassObject in state
+      setMapLoaded(true);
+    });
+  }, []);
 
+  const handleCurrentLocation = () => {
+    if (!mapLoaded || !mapplsClassObject) {
+      console.error("Map is not yet loaded.");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+      const mapplsClassObject = new mappls();
+      
+        const { latitude, longitude } = position.coords;
+        console.log(`latitude: ${latitude} ,longitude:${longitude}`);
+        const mapPropsSearch = {
+          center: [22.7026698 , 88.388264],
+          traffic: false,
+          zoom: 15,
+          geolocation: false,
+          clickableIcons: false,
+        };
+        mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
+          const mapObj = mapplsClassObject.Map({ id: "map", properties: mapPropsSearch });
+          setMapObject(mapObj);
+          setMapplsClassObject(mapplsClassObject); // Store mapplsClassObject in state
+          setMapLoaded(true);
+        });
+      () => {
+        alert("Unable to retrieve your location.");
+      }
+   } );
+
+  }
   return (
     <div style={{ position: "relative" }}>
       <div
@@ -45,7 +88,7 @@ export default function Home() {
         style={{ position: "absolute", top: "20px", left: "20px" }}
       >
         <label
-          className="relative bg-white min-w-sm max-w-3xl flex flex-col md:flex-row items-center justify-center border py-2 px-2 rounded-2xl gap-2 shadow-2xl focus-within:border-gray-300"
+          className="relative bg-white min-w-sm max-w-3xl flex flex-col md:flex-row items-center justify-center border px-2 rounded-2xl gap-2 shadow-2xl focus-within:border-gray-300 h-12"
           htmlFor="search-bar"
         >
           {!toggleMenuSVG ? (
@@ -79,9 +122,9 @@ export default function Home() {
           <input
             id="search-bar"
             placeholder="Search places here..."
-            className="px-6 py-2 w-full rounded-md flex-1 outline-none bg-white text-black"
+            className="px-6  rounded-md flex-1 outline-none bg-white text-black"
           />
-          <button className="w-full md:w-auto px-6 py-3 bg-black border-black text-white fill-white active:scale-95 duration-100 border will-change-transform overflow-hidden relative rounded-xl transition-all disabled:opacity-70">
+          <button className="w-full md:w-auto px-6 py-2  bg-black border-black text-white fill-white active:scale-95 duration-100 border will-change-transform overflow-hidden relative rounded-xl transition-all disabled:opacity-70">
             <div className="relative">
               {/* Loading animation change opacity to display */}
               <div className="flex items-center justify-center h-3 w-3 absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 transition-all">
@@ -124,9 +167,9 @@ export default function Home() {
             </div>
           </button>
         </label>
-        <div className="leading-1.5 flex ml-10 m-3 flex-col">
+        <div className="leading-1.5 flex ml-5 m-1 flex-col">
           <div className="font-semibold shadow-2xl border border-slate-300 bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
-            <button className="me-2  flex active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+            <button className="  flex active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
                 className="mr-1"
                 xmlns="http://www.w3.org/2000/svg"
@@ -142,7 +185,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="leading-1.5 flex m-3 flex-col">
+        <div className="leading-1.5 flex m-1 flex-col">
           <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
@@ -170,7 +213,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="leading-1.5 flex m-3 flex-col">
+        <div className="leading-1.5 flex m-1 flex-col">
           <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
@@ -189,7 +232,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="leading-1.5 flex m-3 flex-col">
+        <div className="leading-1.5 flex m-1 flex-col">
           <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
@@ -207,7 +250,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="leading-1.5 flex m-3 flex-col">
+        <div className="leading-1.5 flex m-1 flex-col">
           <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
@@ -225,7 +268,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="leading-1.5 flex m-3 flex-col">
+        <div className="leading-1.5 flex m-1 flex-col">
           <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
@@ -781,6 +824,21 @@ export default function Home() {
           </nav>
         </div>
       )}
+
+      <button className="active:scale-95 duration-100 border will-change-transform overflow-hidden transition-all disabled:opacity-70 bg-white rounded-full p-3 bottom-40 fixed right-20">
+        <svg
+
+          onClick={handleCurrentLocation}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 0 24 24"
+          width="24px"
+          fill="#000000"
+        >
+          <path d="M0 0h24v24H0V0z" fill="none" />
+          <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
+        </svg>
+      </button>
     </div>
   );
 }

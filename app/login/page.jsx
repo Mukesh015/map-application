@@ -1,18 +1,60 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { CgSpinner } from "react-icons/cg";
 import Link from "next/link";
 import {
   useSignInWithGithub,
   useSignInWithGoogle,
   useSignInWithEmailAndPassword,
+  useSignInWithFacebook,
+  useSendEmailVerification,
 } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
 
 export default function Login() {
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [signInWithGoogle] = useSignInWithGoogle(auth);
+  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [sendEmailVerification] = useSendEmailVerification(auth);
+
+  const toggleLoading = () => {
+    setLoading(!loading);
+  };
+  const toggleGoogleLoading = () => {
+    setGoogleLoading(!googleLoading);
+  };
+
+  const handleLogin = useCallback(
+    async (provider) => {
+      try {
+        if (provider === "google") {
+          toggleGoogleLoading();
+          const res = await signInWithGoogle();
+          setGoogleLoading(false);
+          console.log(res);
+        } else if (provider === "email") {
+          toggleLoading();
+          const res = await signInWithEmailAndPassword(email, password);
+          setLoading(false);
+          console.log(res);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("Internal server error", error);
+      }
+    },
+    [
+      email,
+      password,
+      loading,
+      signInWithGoogle,
+      signInWithEmailAndPassword,
+      toggleLoading,
+    ]
+  );
 
   return (
     <>
@@ -120,7 +162,7 @@ export default function Login() {
                       Don't have an account?
                       <p className="text-blue-500 hover:text-blue-900 font-semibold cursor-pointer">
                         {" "}
-                        <Link href={"/signup"}>Create Account</Link>
+                        <Link href={"/signup"}> Create Account</Link>
                       </p>
                     </h2>
                   </div>
@@ -128,6 +170,8 @@ export default function Login() {
                     <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                       <div className="relative">
                         <input
+                          onChange={(e) => setEmail(e.target.value)}
+                          value={email}
                           autoComplete="off"
                           id="email"
                           name="email"
@@ -144,6 +188,8 @@ export default function Login() {
                       </div>
                       <div className="relative">
                         <input
+                          onChange={(e) => setPassword(e.target.value)}
+                          value={password}
                           autoComplete="off"
                           id="password"
                           name="password"
@@ -167,8 +213,17 @@ export default function Login() {
                         </p>
                       </div>
                       <div className="relative">
-                        <button className="active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70 bg-green-800 text-white font-semibold rounded-2xl px-6 py-1 mt-2">
-                          Login
+                        <button
+                          onClick={() => handleLogin("email")}
+                          className="flex ml-20 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70 bg-green-800 text-white font-semibold rounded-2xl px-6 py-1 mt-10"
+                        >
+                          {loading && (
+                            <CgSpinner
+                              className="mt-1 mr-2 animate-spin"
+                              size={20}
+                            />
+                          )}
+                          <span>Login</span>
                         </button>
                       </div>
                     </div>
@@ -181,14 +236,16 @@ export default function Login() {
                 </div>
                 <div className="w-full flex">
                   <button
-                    onClick={() => signInWithGoogle()}
-                    className="mr-14 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70"
+                    onClick={() => handleLogin("google")}
+                    type="button"
+                    className="text-white w-full active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70  bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 me-2 mb-2"
                   >
                     <svg
+                      className="mr-10"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"
-                      width="48px"
-                      height="48px"
+                      width="24px"
+                      height="24px"
                     >
                       <path
                         fill="#FFC107"
@@ -207,33 +264,10 @@ export default function Login() {
                         d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
                       />
                     </svg>
-                  </button>
-                  <button className="mr-16 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 64 64"
-                      width="48px"
-                      height="48px"
-                    >
-                      <path d="M32 6C17.641 6 6 17.641 6 32c0 12.277 8.512 22.56 19.955 25.286-.592-.141-1.179-.299-1.755-.479V50.85c0 0-.975.325-2.275.325-3.637 0-5.148-3.245-5.525-4.875-.229-.993-.827-1.934-1.469-2.509-.767-.684-1.126-.686-1.131-.92-.01-.491.658-.471.975-.471 1.625 0 2.857 1.729 3.429 2.623 1.417 2.207 2.938 2.577 3.721 2.577.975 0 1.817-.146 2.397-.426.268-1.888 1.108-3.57 2.478-4.774-6.097-1.219-10.4-4.716-10.4-10.4 0-2.928 1.175-5.619 3.133-7.792C19.333 23.641 19 22.494 19 20.625c0-1.235.086-2.751.65-4.225 0 0 3.708.026 7.205 3.338C28.469 19.268 30.196 19 32 19s3.531.268 5.145.738c3.497-3.312 7.205-3.338 7.205-3.338.567 1.474.65 2.99.65 4.225 0 2.015-.268 3.19-.432 3.697C46.466 26.475 47.6 29.124 47.6 32c0 5.684-4.303 9.181-10.4 10.4 1.628 1.43 2.6 3.513 2.6 5.85v8.557c-.576.181-1.162.338-1.755.479C49.488 54.56 58 44.277 58 32 58 17.641 46.359 6 32 6zM33.813 57.93C33.214 57.972 32.61 58 32 58 32.61 58 33.213 57.971 33.813 57.93zM37.786 57.346c-1.164.265-2.357.451-3.575.554C35.429 57.797 36.622 57.61 37.786 57.346zM32 58c-.61 0-1.214-.028-1.813-.07C30.787 57.971 31.39 58 32 58zM29.788 57.9c-1.217-.103-2.411-.289-3.574-.554C27.378 57.61 28.571 57.797 29.788 57.9z" />
-                    </svg>
-                  </button>
-                  <button className="active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 48 48"
-                      width="48px"
-                      height="48px"
-                    >
-                      <path
-                        fill="#039be5"
-                        d="M24 5A19 19 0 1 0 24 43A19 19 0 1 0 24 5Z"
-                      />
-                      <path
-                        fill="#fff"
-                        d="M26.572,29.036h4.917l0.772-4.995h-5.69v-2.73c0-2.075,0.678-3.915,2.619-3.915h3.119v-4.359c-0.548-0.074-1.707-0.236-3.897-0.236c-4.573,0-7.254,2.415-7.254,7.917v3.323h-4.701v4.995h4.701v13.729C22.089,42.905,23.032,43,24,43c0.875,0,1.729-0.08,2.572-0.194V29.036z"
-                      />
-                    </svg>
+                    Sign in with Google
+                    {googleLoading && (
+                      <CgSpinner className="animate-spin ml-3" size={20} />
+                    )}
                   </button>
                 </div>
               </div>
