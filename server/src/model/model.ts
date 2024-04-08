@@ -4,6 +4,7 @@ interface UserDocument extends Document {
     email: string;
     username: string;
     password: string;
+    phoneNumber: Number;
     avatar?: string;
     history: any[]; // Adjust type according to your requirements
     analytics: { date: Date; watchTime: number }[]; // Assuming analytics store datewise watchtime
@@ -13,6 +14,11 @@ const userSchema = new mongoose.Schema<UserDocument>(
     {
         email: {
             type: String,
+            required: true,
+            unique: true
+        },
+        phoneNumber:{
+            type: Number,
             required: true,
             unique: true
         },
@@ -37,4 +43,4 @@ const userSchema = new mongoose.Schema<UserDocument>(
 
 const UserModel: Model<UserDocument> = mongoose.model<UserDocument>("Users", userSchema);
 
-export { UserModel };
+export { UserModel,UserDocument };
