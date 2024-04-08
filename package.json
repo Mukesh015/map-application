@@ -13,12 +13,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
     "firebase": "^10.10.0",
     "mappls-web-maps": "^3.0.4",
     "next": "14.1.4",
+    "otp-input-react": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-firebase-hooks": "^5.1.1"
+    "react-firebase-hooks": "^5.1.1",
+    "react-icons": "^5.0.1",
+    "react-otp-input": "^3.1.1",
+    "react-phone-input-2": "^2.15.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
