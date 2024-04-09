@@ -13,8 +13,7 @@ module.exports = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily: {
-        monster: ["Montserrat", "sans-serif"],
-        kanit: ["Kanit", "sans-serif"],
+        golos: ["Golos Text", "sans-serif"],
       },
     },
   },

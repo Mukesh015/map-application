@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
+import NextTopLoader from "nextjs-toploader";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -18,10 +19,11 @@ export default function ForgotPassword() {
     const success = await sendPasswordResetEmail(email, actionCodeSettings);
     setLoading(false);
     console.log(success);
-  }, [email, actionCodeSettings,loading]);
+  }, [email, actionCodeSettings, loading]);
 
   return (
     <>
+      <NextTopLoader />
       <div className="bg-white flex">
         <div className="max-h-full max-w-2xl shadow-2xl">
           <div className="p-5 ml-3 flex">

@@ -1,8 +1,10 @@
 "use client";
 import { mappls } from "mappls-web-maps";
-import React, { useEffect, useState, useRef } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
+import Link from "next/link";
+import NextTopLoader from "nextjs-toploader";
 
 export default function Home() {
   const map = useRef(null);
@@ -12,6 +14,7 @@ export default function Home() {
   const [userName, setuserName] = useState(null);
   const [email, setemail] = useState(null);
   const [avatar, setavatar] = useState(null);
+  const [signOut] = useSignOut(auth);
 
   const [user] = useAuthState(auth);
 
@@ -19,56 +22,62 @@ export default function Home() {
     setToggleMenuSVG(!toggleMenuSVG);
   };
 
+  const handleLogout = useCallback(async () => {
+    const res = await signOut();
+    console.log(res);
+    window.location.reload();
+  }, []);
+
   const handleFlipAccountMenuButton = () => {
     setToggleAccountMenu(!toggleAccountMenu);
   };
 
-  const mapProps = {
-    traffic: false,
-    zoom: 4,
-    geolocation: true,
-    clickableIcons: true,
-    zoomControls: true,
-  };
-  var mapObject;
-  var mapplsClassObject = new mappls();
-  mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
-    if (map.current) {
-      map.current.remove();
-    }
-    map.current = mapplsClassObject.Map({
-      id: "map",
-      properties: {
-        //  //Properties Object
-        center: [28.544, 77.5454], // the coordinates as [lat, lon]
-        draggable: true, // toggle draggable map
-        zoom: 5, //the initial Map `zoom` level.
-        minZoom: 8, //  minimum zoom level which will be displayed on the map
-        maxZoom: 15, //  maximum zoom level which will be displayed on the map
-        backgroundColor: "#fff", // used for the background of the Map div.
-        heading: 100, // The `heading` for aerial imagery in degrees
-        traffic: true, // To show traffic control on map.
-        geolocation: true, // to display the icon for current location
-        // Controls
-        disableDoubleClickZoom: true, // enables/disables zoom and center on double click.
-        fullscreenControl: true, // It shows the icon of the full screen on the map
-        scrollWheel: true, // If false, disables zooming on the map using a mouse scroll
-        scrollZoom: true, // if `false` scroll to zoom interaction is disabled.
-        rotateControl: true, // enable/disable of the map.
-        scaleControl: true, // The initial enabled/disabled state of the Scale control.
-        zoomControl: true, // The enabled/disabled Zoom control at a fixed position
-        clickableIcons: true, //to make the icons clickable
-        indoor: true, // To show indoor floor plans in MapmyIndia Vector SDK.
-        indoor_position: "bottom-left",
-        //Possible Values : TOP_CENTER, `TOP_LEFT`, `TOP_RIGHT`, `LEFT_TOP`, `RIGHT_TOP`, `LEFT_CENTER`, `RIGHT_CENTER`, `LEFT_BOTTOM`, `RIGHT_BOTTOM`, `BOTTOM_CENTER`, `BOTTOM_LEFT`, `BOTTOM_RIGHT``
-        tilt: 30, //tilt : Controls the automatic switching behavior for the angle of incidence of the map. The only allowed values are 0 to 85.
-      },
-    });
-    map.current.on("load", () => {
-      setIsMapLoaded(true);
-    });
-    mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
-  });
+  //   const mapProps = {
+  //     traffic: false,
+  //     zoom: 6,
+  //     geolocation: true,
+  //     clickableIcons: true,
+  //     zoomControls: true,
+  //   };
+  // var mapObject;
+  // var mapplsClassObject = new mappls();
+  // mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
+  //   if (map.current) {
+  //     map.current.remove();
+  //   }
+  //   map.current = mapplsClassObject.Map({
+  //     id: "map",
+  //     properties: {
+  //       //  //Properties Object
+  //       center: [28.544, 77.5454], // the coordinates as [lat, lon]
+  //       draggable: true, // toggle draggable map
+  //       zoom: 5, //the initial Map `zoom` level.
+  //       minZoom: 8, //  minimum zoom level which will be displayed on the map
+  //       maxZoom: 15, //  maximum zoom level which will be displayed on the map
+  //       backgroundColor: "#fff", // used for the background of the Map div.
+  //       heading: 100, // The `heading` for aerial imagery in degrees
+  //       traffic: true, // To show traffic control on map.
+  //       geolocation: true, // to display the icon for current location
+  //       // Controls
+  //       disableDoubleClickZoom: true, // enables/disables zoom and center on double click.
+  //       fullscreenControl: true, // It shows the icon of the full screen on the map
+  //       scrollWheel: true, // If false, disables zooming on the map using a mouse scroll
+  //       scrollZoom: true, // if `false` scroll to zoom interaction is disabled.
+  //       rotateControl: true, // enable/disable of the map.
+  //       scaleControl: true, // The initial enabled/disabled state of the Scale control.
+  //       zoomControl: true, // The enabled/disabled Zoom control at a fixed position
+  //       clickableIcons: true, //to make the icons clickable
+  //       indoor: true, // To show indoor floor plans in MapmyIndia Vector SDK.
+  //       indoor_position: "bottom-left",
+  //       //Possible Values : TOP_CENTER, `TOP_LEFT`, `TOP_RIGHT`, `LEFT_TOP`, `RIGHT_TOP`, `LEFT_CENTER`, `RIGHT_CENTER`, `LEFT_BOTTOM`, `RIGHT_BOTTOM`, `BOTTOM_CENTER`, `BOTTOM_LEFT`, `BOTTOM_RIGHT``
+  //       tilt: 30, //tilt : Controls the automatic switching behavior for the angle of incidence of the map. The only allowed values are 0 to 85.
+  //     },
+  //   });
+  //   map.current.on("load", () => {
+  //     setIsMapLoaded(true);
+  //   });
+  //   mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
+  // });
 
   useEffect(() => {
     if (user) {
@@ -92,6 +101,7 @@ export default function Home() {
           left: 0,
         }}
       ></div>
+      <NextTopLoader />
       <div
         className="flex"
         style={{ position: "absolute", top: "20px", left: "20px" }}
@@ -351,7 +361,7 @@ export default function Home() {
       {toggleMenuSVG && (
         <div
           id="docs-sidebar"
-          className="hs-overlay   [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-3 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+          className="hs-overlay ease-in-out cursor-pointer [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-3 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
         >
           <div className="px-6 flex">
             <a
@@ -375,14 +385,28 @@ export default function Home() {
             </svg>
           </div>
           <div className="mt-5 items-center justify-center text-center">
-            <img
-              className="h-20 w-20 ml-20 rounded-full"
-              src={avatar}
-              alt="https://i.pinimg.com/736x/0d/64/98/0d64989794b1a4c9d89bff571d3d5842.jpg"
-            />
-            <p className="text-gray-500 font-semibold mt-2">{userName}</p>
-            <p className="border border-slate-300 ml-5 mr-5 mt-2"></p>
+            {avatar ? (
+              <img className="h-20 w-20 ml-20 rounded-full" src={avatar} />
+            ) : (
+              <img
+                className="h-20 w-20 ml-20 rounded-full"
+                src="https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small_2x/default-avatar-profile-icon-of-social-media-user-vector.jpg"
+              />
+            )}
+
+            {userName ? (
+              <p className="text-gray-500 font-semibold mt-2">{userName}</p>
+            ) : (
+              <Link href={"/login"}>
+                {" "}
+                <button className="flex ml-20  active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70 bg-green-800 text-white font-semibold rounded-2xl px-5 py-1 mt-3">
+                  <span>Login</span>
+                </button>
+              </Link>
+            )}
           </div>
+
+          <p className="border border-slate-300 ml-5 mr-5 mt-2"></p>
 
           <nav
             className="hs-accordion-group p-6 w-full flex flex-col flex-wrap"
@@ -569,6 +593,24 @@ export default function Home() {
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 0 24 24"
+                            width="24px"
+                            fill="#000000"
+                          >
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                          </svg>
+                          Change Username
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                          href="#"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
                             enableBackground="new 0 0 24 24"
                             height="24px"
                             viewBox="0 0 24 24"
@@ -587,11 +629,8 @@ export default function Home() {
                           Change Password
                         </a>
                       </li>
-                      <li>
-                        <a
-                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
-                          href="#"
-                        >
+                      <li onClick={() => handleLogout()}>
+                        <a className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             enableBackground="new 0 0 24 24"
@@ -869,22 +908,6 @@ export default function Home() {
           </nav>
         </div>
       )}
-
-      <button
-        id="current-location"
-        className="active:scale-95 duration-100 border will-change-transform overflow-hidden transition-all disabled:opacity-70 bg-white rounded-full p-3 bottom-40 fixed right-20"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 0 24 24"
-          width="24px"
-          fill="#000000"
-        >
-          <path d="M0 0h24v24H0V0z" fill="none" />
-          <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
-        </svg>
-      </button>
     </div>
   );
 }

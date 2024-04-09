@@ -2,7 +2,8 @@
 import React, { useCallback, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
+import NextTopLoader from "nextjs-toploader";
 import {
   useSignInWithGithub,
   useSignInWithGoogle,
@@ -66,6 +67,7 @@ export default function Login() {
 
   return (
     <>
+      <NextTopLoader />
       <div className="bg-white flex">
         <div className="max-h-full max-w-2xl shadow-2xl">
           <div className="p-5 ml-3 flex">
