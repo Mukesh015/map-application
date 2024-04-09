@@ -1,10 +1,19 @@
 "use client";
 import { mappls } from "mappls-web-maps";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
 
 export default function Home() {
+  const map = useRef(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [toggleMenuSVG, setToggleMenuSVG] = useState(false);
   const [toggleAccountMenu, setToggleAccountMenu] = useState(false);
+  const [userName, setuserName] = useState(null);
+  const [email, setemail] = useState(null);
+  const [avatar, setavatar] = useState(null);
+
+  const [user] = useAuthState(auth);
 
   const handleFlipMenuButton = () => {
     setToggleMenuSVG(!toggleMenuSVG);
@@ -15,18 +24,61 @@ export default function Home() {
   };
 
   const mapProps = {
-    center: [28.633, 77.2194],
     traffic: false,
     zoom: 4,
-    geolocation: false,
-    clickableIcons: false,
+    geolocation: true,
+    clickableIcons: true,
+    zoomControls: true,
   };
-  // var mapObject;
-  // var mapplsClassObject = new mappls();
-  // mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
-  //   mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
-  //   mapObject.on("load", () => {});
-  // });
+  var mapObject;
+  var mapplsClassObject = new mappls();
+  mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
+    if (map.current) {
+      map.current.remove();
+    }
+    map.current = mapplsClassObject.Map({
+      id: "map",
+      properties: {
+        //  //Properties Object
+        center: [28.544, 77.5454], // the coordinates as [lat, lon]
+        draggable: true, // toggle draggable map
+        zoom: 5, //the initial Map `zoom` level.
+        minZoom: 8, //  minimum zoom level which will be displayed on the map
+        maxZoom: 15, //  maximum zoom level which will be displayed on the map
+        backgroundColor: "#fff", // used for the background of the Map div.
+        heading: 100, // The `heading` for aerial imagery in degrees
+        traffic: true, // To show traffic control on map.
+        geolocation: true, // to display the icon for current location
+        // Controls
+        disableDoubleClickZoom: true, // enables/disables zoom and center on double click.
+        fullscreenControl: true, // It shows the icon of the full screen on the map
+        scrollWheel: true, // If false, disables zooming on the map using a mouse scroll
+        scrollZoom: true, // if `false` scroll to zoom interaction is disabled.
+        rotateControl: true, // enable/disable of the map.
+        scaleControl: true, // The initial enabled/disabled state of the Scale control.
+        zoomControl: true, // The enabled/disabled Zoom control at a fixed position
+        clickableIcons: true, //to make the icons clickable
+        indoor: true, // To show indoor floor plans in MapmyIndia Vector SDK.
+        indoor_position: "bottom-left",
+        //Possible Values : TOP_CENTER, `TOP_LEFT`, `TOP_RIGHT`, `LEFT_TOP`, `RIGHT_TOP`, `LEFT_CENTER`, `RIGHT_CENTER`, `LEFT_BOTTOM`, `RIGHT_BOTTOM`, `BOTTOM_CENTER`, `BOTTOM_LEFT`, `BOTTOM_RIGHT``
+        tilt: 30, //tilt : Controls the automatic switching behavior for the angle of incidence of the map. The only allowed values are 0 to 85.
+      },
+    });
+    map.current.on("load", () => {
+      setIsMapLoaded(true);
+    });
+    mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
+  });
+
+  useEffect(() => {
+    if (user) {
+      setuserName(user.displayName);
+      setemail(user.email);
+      setavatar(user.photoURL);
+    } else {
+      console.log("NOT Available");
+    }
+  }, [user]);
 
   return (
     <div style={{ position: "relative" }}>
@@ -211,6 +263,26 @@ export default function Home() {
           <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
+                xmlns="http://www.w3.org/2000/svg"
+                enableBackground="new 0 0 24 24"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+              >
+                <g>
+                  <rect fill="none" height="24" width="24" />
+                  <path d="M21,4h-8h-1H7V2H5v2v10v8h2v-8h4h1h9l-2-5L21,4z M17.14,9.74l0.9,2.26H12h-1H7V6h5h1h5.05l-0.9,2.26L16.85,9L17.14,9.74z M14,9c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,7.9,14,9z" />
+                </g>
+              </svg>
+              Spots
+            </button>
+          </div>
+        </div>
+        <div className="leading-1.5 flex m-1 flex-col">
+          <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
                 className="mr-1"
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -305,12 +377,10 @@ export default function Home() {
           <div className="mt-5 items-center justify-center text-center">
             <img
               className="h-20 w-20 ml-20 rounded-full"
-              src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg"
+              src={avatar}
               alt="https://i.pinimg.com/736x/0d/64/98/0d64989794b1a4c9d89bff571d3d5842.jpg"
             />
-            <p className="text-gray-500 font-semibold mt-2">
-              Mukesh Kumar Gupta
-            </p>
+            <p className="text-gray-500 font-semibold mt-2">{userName}</p>
             <p className="border border-slate-300 ml-5 mr-5 mt-2"></p>
           </div>
 
@@ -474,6 +544,24 @@ export default function Home() {
                     className="hs-accordion-content w-full overflow-hidden transition-[height] ease-linear duration-700"
                   >
                     <ul className="pt-2 ps-2">
+                      <li>
+                        <a
+                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                          href="#"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 0 24 24"
+                            width="24px"
+                            fill="#000000"
+                          >
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M14.12 4l1.83 2H20v12H4V6h4.05l1.83-2h4.24M15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2zm-3 7c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" />
+                          </svg>
+                          Change Avatar
+                        </a>
+                      </li>
                       <li>
                         <a
                           className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
@@ -782,7 +870,10 @@ export default function Home() {
         </div>
       )}
 
-      <button className="active:scale-95 duration-100 border will-change-transform overflow-hidden transition-all disabled:opacity-70 bg-white rounded-full p-3 bottom-40 fixed right-20">
+      <button
+        id="current-location"
+        className="active:scale-95 duration-100 border will-change-transform overflow-hidden transition-all disabled:opacity-70 bg-white rounded-full p-3 bottom-40 fixed right-20"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="24px"
