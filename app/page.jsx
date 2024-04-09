@@ -49,7 +49,6 @@ export default function Home() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
       const mapplsClassObject = new mappls();
-      
         const { latitude, longitude } = position.coords;
         console.log(`latitude: ${latitude} ,longitude:${longitude}`);
         const mapPropsSearch = {
