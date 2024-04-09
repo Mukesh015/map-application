@@ -50,7 +50,7 @@ export default function Home() {
       }
     };
   
-    console.log("API Key:", process.env.NEXT_PUBLIC_MAP_KEY);
+
   
     const script = document.createElement('script');
     script.src = `https://apis.mappls.com/advancedmaps/api/${process.env.NEXT_PUBLIC_MAP_KEY}/map_sdk?layer=vector&v=3.0&callback=initMap1`;
