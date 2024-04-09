@@ -5,6 +5,7 @@ import { CgSpinner } from "react-icons/cg";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import NextTopLoader from 'nextjs-toploader';
 
 export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -59,6 +60,7 @@ export default function Login() {
 
   return (
     <>
+    <NextTopLoader />
       <div className="bg-white flex">
         <div className="max-h-full max-w-2xl shadow-2xl">
           <div className="p-5 ml-3 flex">

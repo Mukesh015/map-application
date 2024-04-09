@@ -2,6 +2,8 @@
 import React, { useCallback, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import NextTopLoader from "nextjs-toploader";
 import {
   useSignInWithGithub,
   useSignInWithGoogle,
@@ -12,6 +14,7 @@ import {
 import { auth } from "@/firebase/config";
 
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,11 +38,17 @@ export default function Login() {
           const res = await signInWithGoogle();
           setGoogleLoading(false);
           console.log(res);
+          setTimeout(() => {
+            router.push("/");
+          }, 2000);
         } else if (provider === "email") {
           toggleLoading();
           const res = await signInWithEmailAndPassword(email, password);
           setLoading(false);
           console.log(res);
+          setTimeout(() => {
+            router.push("/");
+          }, 2000);
         }
       } catch (error) {
         setLoading(false);
@@ -58,6 +67,7 @@ export default function Login() {
 
   return (
     <>
+      <NextTopLoader />
       <div className="bg-white flex">
         <div className="max-h-full max-w-2xl shadow-2xl">
           <div className="p-5 ml-3 flex">

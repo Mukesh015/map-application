@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { auth } from "@/firebase/config";
 import { CgSpinner } from "react-icons/cg";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import NextTopLoader from 'nextjs-toploader';
 export default function Signup() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,6 +32,7 @@ export default function Signup() {
 
   return (
     <>
+    <NextTopLoader />
       <div className="bg-white flex">
         <div className="max-h-full max-w-2xl shadow-2xl">
           <div className="p-5 ml-3 flex">

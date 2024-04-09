@@ -1,78 +1,85 @@
 "use client";
-import { mappls } from "mappls-web-maps";
-import React, { useState, useEffect } from "react";
 
-const mapProps = {
-  center: [28.633, 77.2194],
-  traffic: false,
-  zoom: 4,
-  geolocation: false,
-  clickableIcons: false,
-};
+import React, { useEffect, useState, useRef, useCallback } from "react";
+
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
+import Link from "next/link";
+import NextTopLoader from "nextjs-toploader";
+
+
 
 export default function Home() {
+  const map = useRef(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [toggleMenuSVG, setToggleMenuSVG] = useState(false);
   const [toggleAccountMenu, setToggleAccountMenu] = useState(false);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [mapobject,setMapObject ]=useState(null);
-  const [mapplsClassObject, setMapplsClassObject] = useState(null);
+  const [userName, setuserName] = useState(null);
+  const [email, setemail] = useState(null);
+  const [avatar, setavatar] = useState(null);
+  const [signOut] = useSignOut(auth);
+
+  const [user] = useAuthState(auth);
 
   const handleFlipMenuButton = () => {
     setToggleMenuSVG(!toggleMenuSVG);
   };
+
+  const handleLogout = useCallback(async () => {
+    const res = await signOut();
+    console.log(res);
+    window.location.reload();
+  }, []);
 
   const handleFlipAccountMenuButton = () => {
     setToggleAccountMenu(!toggleAccountMenu);
   };
 
   useEffect(() => {
-    const newMapplsClassObject = new mappls();
-    newMapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
-      const mapObj = newMapplsClassObject.Map({ id: "map", properties: mapProps });
-      setMapObject(mapObj);
-      setMapplsClassObject(newMapplsClassObject); // Store mapplsClassObject in state
-      setMapLoaded(true);
-    });
-  }, []);
-
-  const handleCurrentLocation = () => {
-    if (!mapLoaded || !mapplsClassObject) {
-      console.error("Map is not yet loaded.");
-      return;
-    }
-
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-      const mapplsClassObject = new mappls();
-        const { latitude, longitude } = position.coords;
-        console.log(`latitude: ${latitude} ,longitude:${longitude}`);
-        const mapPropsSearch = {
-          center: [22.7026698 , 88.388264],
-          traffic: false,
-          zoom: 15,
-          geolocation: false,
-          clickableIcons: false,
-        };
-        mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
-          const mapObj = mapplsClassObject.Map({ id: "map", properties: mapPropsSearch });
-          setMapObject(mapObj);
-          setMapplsClassObject(mapplsClassObject); // Store mapplsClassObject in state
-          setMapLoaded(true);
+    window.initMap1 = () => {
+      console.log("Initializing map...");
+      // Check if the map object exists and is a function
+      if (typeof mappls !== 'undefined' && typeof mappls.Map === 'function') {
+        const map = new mappls.Map('map', {
+          center: [28.61, 77.23],
+          geolocation: true,
+          zoomControl: true
         });
-      () => {
-        alert("Unable to retrieve your location.");
+      } else {
+        console.error("Map constructor is not available. Mappls library may not have been loaded correctly.");
       }
-   } );
+    };
+  
+    console.log("API Key:", process.env.NEXT_PUBLIC_MAP_KEY);
+  
+    const script = document.createElement('script');
+    script.src = `https://apis.mappls.com/advancedmaps/api/${process.env.NEXT_PUBLIC_MAP_KEY}/map_sdk?layer=vector&v=3.0&callback=initMap1`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => console.log("Map SDK script loaded successfully.");
+    script.onerror = (error) => console.error("Error loading Map SDK script:", error);
+    document.body.appendChild(script);
+  
+    return () => {
+      document.body.removeChild(script);
+      delete window.initMap1; // Clean up the global function
+    };
+  }, []);
+  
 
-  }
+  useEffect(() => {
+    if (user) {
+      setuserName(user.displayName);
+      setemail(user.email);
+      setavatar(user.photoURL);
+    } else {
+      console.log("NOT Available");
+    }
+  }, [user]);
+
   return (
     <div style={{ position: "relative" }}>
-      <div
+            <div
         id="map"
         style={{
           width: "100%",
@@ -82,6 +89,7 @@ export default function Home() {
           left: 0,
         }}
       ></div>
+      <NextTopLoader />
       <div
         className="flex"
         style={{ position: "absolute", top: "20px", left: "20px" }}
@@ -253,6 +261,26 @@ export default function Home() {
           <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
             <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
               <svg
+                xmlns="http://www.w3.org/2000/svg"
+                enableBackground="new 0 0 24 24"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#000000"
+              >
+                <g>
+                  <rect fill="none" height="24" width="24" />
+                  <path d="M21,4h-8h-1H7V2H5v2v10v8h2v-8h4h1h9l-2-5L21,4z M17.14,9.74l0.9,2.26H12h-1H7V6h5h1h5.05l-0.9,2.26L16.85,9L17.14,9.74z M14,9c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,7.9,14,9z" />
+                </g>
+              </svg>
+              Spots
+            </button>
+          </div>
+        </div>
+        <div className="leading-1.5 flex m-1 flex-col">
+          <div className="font-semibold bg-gray-50 cursor-pointer text-slate-600 rounded-xl p-2">
+            <button className="me-2 flex border-slate-300 active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70">
+              <svg
                 className="mr-1"
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -321,7 +349,7 @@ export default function Home() {
       {toggleMenuSVG && (
         <div
           id="docs-sidebar"
-          className="hs-overlay   [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-3 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+          className="hs-overlay ease-in-out cursor-pointer [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-3 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
         >
           <div className="px-6 flex">
             <a
@@ -345,16 +373,28 @@ export default function Home() {
             </svg>
           </div>
           <div className="mt-5 items-center justify-center text-center">
-            <img
-              className="h-20 w-20 ml-20 rounded-full"
-              src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg"
-              alt="https://i.pinimg.com/736x/0d/64/98/0d64989794b1a4c9d89bff571d3d5842.jpg"
-            />
-            <p className="text-gray-500 font-semibold mt-2">
-              Mukesh Kumar Gupta
-            </p>
-            <p className="border border-slate-300 ml-5 mr-5 mt-2"></p>
+            {avatar ? (
+              <img className="h-20 w-20 ml-20 rounded-full" src={avatar} />
+            ) : (
+              <img
+                className="h-20 w-20 ml-20 rounded-full"
+                src="https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small_2x/default-avatar-profile-icon-of-social-media-user-vector.jpg"
+              />
+            )}
+
+            {userName ? (
+              <p className="text-gray-500 font-semibold mt-2">{userName}</p>
+            ) : (
+              <Link href={"/login"}>
+                {" "}
+                <button className="flex ml-20  active:scale-110 duration-100 will-change-transform relative transition-all disabled:opacity-70 bg-green-800 text-white font-semibold rounded-2xl px-5 py-1 mt-3">
+                  <span>Login</span>
+                </button>
+              </Link>
+            )}
           </div>
+
+          <p className="border border-slate-300 ml-5 mr-5 mt-2"></p>
 
           <nav
             className="hs-accordion-group p-6 w-full flex flex-col flex-wrap"
@@ -523,6 +563,42 @@ export default function Home() {
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 0 24 24"
+                            width="24px"
+                            fill="#000000"
+                          >
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M14.12 4l1.83 2H20v12H4V6h4.05l1.83-2h4.24M15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2zm-3 7c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" />
+                          </svg>
+                          Change Avatar
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                          href="#"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 0 24 24"
+                            width="24px"
+                            fill="#000000"
+                          >
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                          </svg>
+                          Change Username
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
+                          href="#"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
                             enableBackground="new 0 0 24 24"
                             height="24px"
                             viewBox="0 0 24 24"
@@ -541,11 +617,8 @@ export default function Home() {
                           Change Password
                         </a>
                       </li>
-                      <li>
-                        <a
-                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100"
-                          href="#"
-                        >
+                      <li onClick={() => handleLogout()}>
+                        <a className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             enableBackground="new 0 0 24 24"
@@ -823,21 +896,6 @@ export default function Home() {
           </nav>
         </div>
       )}
-
-      <button className="active:scale-95 duration-100 border will-change-transform overflow-hidden transition-all disabled:opacity-70 bg-white rounded-full p-3 bottom-40 fixed right-20">
-        <svg
-
-          onClick={handleCurrentLocation}
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 0 24 24"
-          width="24px"
-          fill="#000000"
-        >
-          <path d="M0 0h24v24H0V0z" fill="none" />
-          <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
-        </svg>
-      </button>
     </div>
   );
 }
