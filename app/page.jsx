@@ -1,17 +1,10 @@
 "use client";
-import NextTopLoader from "nextjs-toploader";
+import { mappls } from "mappls-web-maps";
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import Link from "next/link";
-import { CgSpinner } from "react-icons/cg";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
-import {
-  useAuthState,
-  useSignOut,
-  useUpdateProfile,
-  useUpdatePassword,
-} from "react-firebase-hooks/auth";
-import { reload } from "firebase/auth";
-import { ThemeSwitcher } from "./components/ThemeSwitcher";
+import Link from "next/link";
+import NextTopLoader from "nextjs-toploader";
 
 export default function Home() {
   // React components
@@ -105,51 +98,53 @@ export default function Home() {
   const handleFlipAccountMenuButton = () => {
     setToggleAccountMenu(!toggleAccountMenu);
   };
-  const handleOpenPasswordPopup = () => {
-    setOpenPasswordPopup(!openPasswordPopup);
-  };
 
-  const handleToggleSettings = () => {
-    setToggleSettings(!toggleSettings);
-  };
-  const toggleSpinner = () => {
-    setShowSpinner(!showSpinner);
-  };
-
-  useEffect(() => {
-    window.initMap1 = () => {
-      console.log("Initializing map...");
-      // Check if the map object exists and is a function
-      if (typeof mappls !== "undefined" && typeof mappls.Map === "function") {
-        const map = new mappls.Map("map", {
-          center: [28.61, 77.23],
-          geolocation: true,
-          zoomControl: true,
-        });
-      } else {
-        console.error(
-          "Map constructor is not available. Mappls library may not have been loaded correctly."
-        );
-      }
-    };
-
-    const script = document.createElement("script");
-    script.src = `https://apis.mappls.com/advancedmaps/api/${process.env.NEXT_PUBLIC_MAP_KEY}/map_sdk?layer=vector&v=3.0&callback=initMap1`;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      console.log("Map SDK script loaded successfully.");
-    };
-    script.onerror = (error) =>
-      console.error("Error loading Map SDK script:", error);
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-      delete window.initMap1;
-      // Clean up the global function
-    };
-  }, []);
+  //   const mapProps = {
+  //     traffic: false,
+  //     zoom: 6,
+  //     geolocation: true,
+  //     clickableIcons: true,
+  //     zoomControls: true,
+  //   };
+  // var mapObject;
+  // var mapplsClassObject = new mappls();
+  // mapplsClassObject.initialize(process.env.NEXT_PUBLIC_MAP_KEY, () => {
+  //   if (map.current) {
+  //     map.current.remove();
+  //   }
+  //   map.current = mapplsClassObject.Map({
+  //     id: "map",
+  //     properties: {
+  //       //  //Properties Object
+  //       center: [28.544, 77.5454], // the coordinates as [lat, lon]
+  //       draggable: true, // toggle draggable map
+  //       zoom: 5, //the initial Map `zoom` level.
+  //       minZoom: 8, //  minimum zoom level which will be displayed on the map
+  //       maxZoom: 15, //  maximum zoom level which will be displayed on the map
+  //       backgroundColor: "#fff", // used for the background of the Map div.
+  //       heading: 100, // The `heading` for aerial imagery in degrees
+  //       traffic: true, // To show traffic control on map.
+  //       geolocation: true, // to display the icon for current location
+  //       // Controls
+  //       disableDoubleClickZoom: true, // enables/disables zoom and center on double click.
+  //       fullscreenControl: true, // It shows the icon of the full screen on the map
+  //       scrollWheel: true, // If false, disables zooming on the map using a mouse scroll
+  //       scrollZoom: true, // if `false` scroll to zoom interaction is disabled.
+  //       rotateControl: true, // enable/disable of the map.
+  //       scaleControl: true, // The initial enabled/disabled state of the Scale control.
+  //       zoomControl: true, // The enabled/disabled Zoom control at a fixed position
+  //       clickableIcons: true, //to make the icons clickable
+  //       indoor: true, // To show indoor floor plans in MapmyIndia Vector SDK.
+  //       indoor_position: "bottom-left",
+  //       //Possible Values : TOP_CENTER, `TOP_LEFT`, `TOP_RIGHT`, `LEFT_TOP`, `RIGHT_TOP`, `LEFT_CENTER`, `RIGHT_CENTER`, `LEFT_BOTTOM`, `RIGHT_BOTTOM`, `BOTTOM_CENTER`, `BOTTOM_LEFT`, `BOTTOM_RIGHT``
+  //       tilt: 30, //tilt : Controls the automatic switching behavior for the angle of incidence of the map. The only allowed values are 0 to 85.
+  //     },
+  //   });
+  //   map.current.on("load", () => {
+  //     setIsMapLoaded(true);
+  //   });
+  //   mapObject = mapplsClassObject.Map({ id: "map", properties: mapProps });
+  // });
 
   useEffect(() => {
     if (user) {
@@ -162,7 +157,7 @@ export default function Home() {
 
   return (
     <div style={{ position: "relative" }}>
-      <div
+            <div
         id="map"
         style={{
           width: "100%",
